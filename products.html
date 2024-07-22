@@ -76,7 +76,7 @@
                   </div>
                   <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
                   <span v-for="(picture,id) in tempProduct.imagesUrl" v-bind:key="id">
-                    <label :for="`imagesUrl${id}`" class="form-label mt-2">輸入圖片網址</label>
+                    <label :for="`imagesUrl${id}`" class="form-label mx-4">輸入圖片網址</label>
                     <input :id="`imagesUrl${id}`" type="text" class="form-control" placeholder="請輸入圖片連結" v-model="tempProduct.imagesUrl[id]">
                     <img v-bind:src="picture" alt="" class="img-fluid  my-2">
                     <div>

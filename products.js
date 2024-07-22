@@ -54,17 +54,17 @@ const app = createApp({
         delModal.show();
       }
     },
+    checkImagesArray(){　//檢查tempProduct的imagesUrl陣列不為空白
+      if(this.tempProduct.imagesUrl){
+        this.tempProduct.imagesUrl = this.tempProduct.imagesUrl.filter(item => item !== '');  //篩選新增更多圖片的連結欄位不為空白 
+      }
+    },
     confirmProduct() {  //在productModal 按下確認後call API post產品資訊
       let url = `${this.url}/api/${this.path}/admin/product`;  //預設是新增產品的API
       let http = 'post';
-      if (!this.isNew) {  //若isNew為true 則改變為編輯產品的API
-        url = `${this.url}/api/${this.path}/admin/product/${this.tempProduct.id}`;
-        http = 'put'
-      }
-      if (!this.tempProduct.id) {  //如果tmpeProduct中沒有id 則為新增產品
-        if(this.tempProduct.imagesUrl){
-          this.tempProduct.imagesUrl = this.tempProduct.imagesUrl.filter(item => item !== '');  //篩選新增更多圖片的連結欄位不為空白 
-        }
+      
+      if (!this.tempProduct.id) {  //如果tempProduct中沒有id 則為新增產品
+        this.checkImagesArray();
         axios[http](url, { data: this.tempProduct })
           .then(res => {
             this.renderProducts();
@@ -76,7 +76,10 @@ const app = createApp({
             console.dir(err.response.data.message);
           });
       }
-      else {   //如果tmpeProduct有id 則為編輯產品
+      else {   //如果tempProduct有id 則為編輯產品
+        url = `${this.url}/api/${this.path}/admin/product/${this.tempProduct.id}`;
+        http = 'put';
+        
         this.products.forEach((item) => {
           if (item.id === this.tempProduct.id) {
             if (JSON.stringify(item) === JSON.stringify(this.tempProduct)) {  //如果編輯內容沒有任何改變 則return
@@ -84,9 +87,7 @@ const app = createApp({
               return;
             }
             else {  //call API put產品
-              if(this.tempProduct.imagesUrl){
-                this.tempProduct.imagesUrl = this.tempProduct.imagesUrl.filter(item => item !== '');  //篩選新增更多圖片的連結欄位不為空白 
-              }
+              this.checkImagesArray();
               axios[http](url, { data: this.tempProduct })
                 .then(res => {
                   alert(res.data.message);
@@ -120,12 +121,12 @@ const app = createApp({
       });
     },
     createImages() {  //新增更多圖片
-      if (!this.tempProduct.imagesUrl) {
+      if (!this.tempProduct.imagesUrl) {  //如果imagesUrl不存在 則幫他創建一個陣列
         this.tempProduct.imagesUrl = [];
       }
       this.tempProduct.imagesUrl.push('');
     },
-    delImages(index) {
+    delImages(index) { //刪除圖片
       this.tempProduct.imagesUrl.splice(index, 1);
     },
   },
